@@ -3,7 +3,6 @@ package ru.netology;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -44,24 +43,21 @@ public class OrderFormTest {
 
         driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Иванов Иван");
 
-
         driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+79991234567");
 
-
-        WebElement checkbox = driver.findElement(By.cssSelector("[data-test-id='agreement'] input"));
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("arguments[0].click();", checkbox);
-
+        driver.findElement(By.cssSelector("[data-test-id='agreement'] .checkbox__box")).click();
 
         driver.findElement(By.cssSelector("button")).click();
 
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         WebElement successMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//*[contains(text(), 'Ваша заявка успешно отправлена!')]")
+                By.cssSelector("[data-test-id='order-success']")
         ));
 
 
-        assertTrue(successMessage.isDisplayed());
+        String expectedText = "Ваша заявка успешно отправлена!";
+        String actualText = successMessage.getText();
+        assertTrue(actualText.contains(expectedText), "Текст не совпадает. Ожидалось: " + expectedText);
     }
 }
